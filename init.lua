@@ -20,11 +20,11 @@ function caffeinateCallback(eventType)
       print("screensDidLock")
     --   switch_wallpaper()
       bluetoothSwitch(0)
-      local chrome = hs.application.get("Google Chrome")
-      print(chrome)
-      if chrome ~= nil then
-          chrome:kill()
-      end
+      -- local chrome = hs.application.get("Google Chrome")
+      -- print(chrome)
+      -- if chrome ~= nil then
+      --     chrome:kill()
+      -- end
     elseif (eventType == hs.caffeinate.watcher.screensDidUnlock) then
       print("screensDidUnlock")
       bluetoothSwitch(1)
