@@ -36,13 +36,13 @@ function formatText()
     -- 快捷键分类
     -- 应用切换类
     local applicationSwitchText = {}
-    table.insert(applicationSwitchText, {msg = '[Application Switch:]'})
+    table.insert(applicationSwitchText, {msg = '[程序切换:]'})
     -- 窗口管理类
     local windowManagement = {}
-    table.insert(windowManagement, {msg = '[Window Management:]'})
+    table.insert(windowManagement, {msg = '[窗口排例:]'})
     -- 密码粘贴类
     local passwordPaste = {}
-    table.insert(passwordPaste, {msg = '[Password Paste:]'})
+    table.insert(passwordPaste, {msg = '[密码粘贴:]'})
 
     -- 每行最多 40 个字符
     local MAX_LEN = 40
