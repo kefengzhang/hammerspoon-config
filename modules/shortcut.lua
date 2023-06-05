@@ -52,12 +52,20 @@ windows = {
     -- eight = {prefix = {"Ctrl", "Option"}, key = "8", message = "8/9"},
     -- -- 9/9
     -- nine = {prefix = {"Ctrl", "Option"}, key = "9", message = "9/9"},
+
+    -- 左 1/2（横屏）或上 1/2（竖屏）
+    left_1_2 = {prefix = {"Ctrl", "Option", "Command"}, key = "1", message = "左或上2分之1"},
+    -- 2分之1中间
+    middle_1_2 = {prefix = {"Ctrl", "Option", "Command"}, key = "2", message = "2分之1中间"},
+    -- 右 1/2（横屏）或下 1/2（竖屏）
+    right_1_2 = {prefix = {"Ctrl", "Option", "Command"}, key = "3", message = "右或下2分之1"},
+
     -- 左 1/3（横屏）或上 1/3（竖屏）
-    left_1_3 = {prefix = {"Ctrl", "Option", "Command"}, key = "1", message = "左或上3分之1"},
+    left_1_3 = {prefix = {"Ctrl", "Option", "Command"}, key = "4", message = "左或上3分之1"},
     -- 中 1/3
-    middle = {prefix = {"Ctrl", "Option", "Command"}, key = "2", message = "3分之1中间"},
+    middle = {prefix = {"Ctrl", "Option", "Command"}, key = "5", message = "3分之1中间"},
     -- 右 1/3（横屏）或下 1/3（竖屏）
-    right_1_3 = {prefix = {"Ctrl", "Option", "Command"}, key = "3", message = "右或下3分之1"},
+    right_1_3 = {prefix = {"Ctrl", "Option", "Command"}, key = "6", message = "右或下3分之1"},
     -- -- 左 2/3（横屏）或上 2/3（竖屏）
     -- left_2_3 = {prefix = {"Ctrl", "Option"}, key = "E", message = "Left 2/3(Horizontal screen) Or Top 2/3(Vertical screen)"},
     -- -- 右 2/3（横屏）或下 2/3（竖屏）

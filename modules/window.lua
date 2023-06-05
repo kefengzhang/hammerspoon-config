@@ -467,6 +467,74 @@ end)
 --     win:setFrame(f)
 -- end)
 
+-- 左 1/2（横屏）或上 1/2（竖屏）
+hs.hotkey.bind(windows.left_1_2.prefix, windows.left_1_2.key, windows.left_1_2.message, function()
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
+    local screen = win:screen()
+    local max = screen:frame()
+    -- 如果为竖屏
+    if isVerticalScreen(screen) then
+        f.x = max.x
+        f.y = max.y
+        f.w = max.w
+        f.h = max.h / 2
+        -- 如果为横屏
+    else
+        f.x = max.x
+        f.y = max.y
+        f.w = max.w / 2
+        f.h = max.h
+    end
+    win:setFrame(f)
+end)
+
+
+-- 中 1/2
+hs.hotkey.bind(windows.middle_1_2.prefix, windows.middle_1_2.key, windows.middle_1_2.message, function()
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
+    local screen = win:screen()
+    local max = screen:frame()
+    -- 如果为竖屏
+    if isVerticalScreen(screen) then
+        f.x = max.x
+        f.y = max.y + (max.h / 3)
+        f.w = max.w
+        f.h = max.h / 2
+        -- 如果为横屏
+    else
+        f.x = max.x + (max.w / 3)
+        f.y = max.y
+        f.w = max.w / 2
+        f.h = max.h
+    end
+    win:setFrame(f)
+end)
+
+-- 右 1/2（横屏）或下 1/2（竖屏）
+hs.hotkey.bind(windows.right_1_2.prefix, windows.right_1_2.key, windows.right_1_2.message, function()
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
+    local screen = win:screen()
+    local max = screen:frame()
+    -- 如果为竖屏
+    if isVerticalScreen(screen) then
+        f.x = max.x
+        f.y = max.y + (max.h / 2)
+        f.w = max.w
+        f.h = max.h / 2
+        -- 如果为横屏
+    else
+        f.x = max.x + (max.w / 2)
+        f.y = max.y
+        f.w = max.w / 2
+        f.h = max.h
+    end
+    win:setFrame(f)
+end)
+
+
 -- 左 1/3（横屏）或上 1/3（竖屏）
 hs.hotkey.bind(windows.left_1_3.prefix, windows.left_1_3.key, windows.left_1_3.message, function()
     local win = hs.window.focusedWindow()
@@ -601,13 +669,13 @@ hs.hotkey.bind(windows.center.prefix, windows.center.key, windows.center.message
     win:setFrame(f)
 
     --如果应用窗口有最小限制,则根据最小窗口居中
-    if win:frame().w > size then
-        f.x = (max.w - win:frame().w) / 2
-        f.y = (max.h - win:frame().h) / 2
-        f.w = win:frame().w
-        f.h = win:frame().h
-        win:setFrame(f)
-    end
+    -- if win:frame().w > size then
+    --     f.x = (max.w - win:frame().w) / 2
+    --     f.y = (max.h - win:frame().h) / 2
+    --     f.w = win:frame().w
+    --     f.h = win:frame().h
+    --     win:setFrame(f)
+    -- end
 end)
 
 -- -- 等比例放大窗口
@@ -655,10 +723,10 @@ hs.hotkey.bind(windows.max.prefix, windows.max.key, windows.max.message, functio
     local f = win:frame()
     local screen = win:screen()
     local max = screen:frame()
-    local size = max.w / 2
+    -- local size = max.w / 2
 
-    f.x = 0
-    f.y = 0
+    f.x = max.x
+    f.y = max.y
     f.w = max.w
     f.h = max.h
     win:setFrame(f)
