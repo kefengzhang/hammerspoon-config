@@ -115,6 +115,16 @@ input_methods = {
     chinese = {prefix = {"Ctrl", "Option"}, key = "K", message="简体拼音"}, 
     japanese = {prefix = {"Option"}, key = "L", message="Hiragana"}
 }
+-- 其他
+hotkey = {
+    show = {prefix = {"Option"}, key = "/", message="显示快捷提示"},
+    hide = {prefix = {'zero'}, key = "escape", message="显示快捷提示"},
+}
+
+-- 其他
+otheres = {
+    lock_screen = {prefix = {'ctrl', 'alt', 'cmd'}, key = "L", message="锁屏"}
+}
 
 -- 表情包搜索快捷键配置
 emoji_search = {
@@ -134,9 +144,10 @@ password_paste = {
 }
 
 -- 快捷键查看面板快捷键配置
-hotkey = {
-    prefix = {
-        "Option"
-    },
-    key = "/"
-}
+-- hotkey = {
+--     prefix = {
+--         "Option"
+--     },
+--     key = "/"
+--     , message = "显示快捷提示"
+-- }

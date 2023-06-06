@@ -28,7 +28,7 @@ canvas:appendElements({
     type = 'rectangle'
 })
 
-function formatText()
+function formatText1()
     
     -- 加载所有绑定的快捷键
     local hotkeys = hs.hotkey.getHotkeys()
@@ -40,28 +40,34 @@ function formatText()
     -- 窗口管理类
     local windowManagement = {}
     table.insert(windowManagement, {msg = '[窗口排例:]'})
-    -- 密码粘贴类
-    local passwordPaste = {}
-    table.insert(passwordPaste, {msg = '[密码粘贴:]'})
+    -- -- 密码粘贴类
+    -- local passwordPaste = {}
+    -- table.insert(passwordPaste, {msg = '[密码粘贴:]'})
+
+    -- 其他
+    local otheres = {}
+    table.insert(otheres, {msg = '[其他:]'})
 
     -- 每行最多 40 个字符
     local MAX_LEN = 40
 
     -- 快捷键分类
     for k, v in ipairs(hotkeys) do
+        -- print_r(v)
         -- 以 ⌥ 开头，表示为应用切换快捷键
         if string.find(v.idx, '^⌥') ~= nil then
             table.insert(applicationSwitchText, {msg = v.msg})
-        end
-        -- 以 ⌃⌥ 或 ⌘⌃⌥ 开头，表示为窗口管理快捷键
-        if string.find(v.idx, '^⌃⌥') ~= nil or string.find(v.idx, '^⌘⌃⌥') ~= nil then
+        elseif string.find(v.idx, '^⌃⌥') ~= nil or string.find(v.idx, '^⌘⌃⌥') ~= nil then
+            -- 以 ⌃⌥ 或 ⌘⌃⌥ 开头，表示为窗口管理快捷键
             table.insert(windowManagement, {msg = v.msg})
-        end
-        -- 以 ⌘⌃ 开头，表示为密码粘贴快捷键
-        if v.idx == '⌘⌃V' then
-            table.insert(passwordPaste, {msg = v.msg})
+        -- elseif v.idx == '⌘⌃V' then
+        --     -- 以 ⌘⌃ 开头，表示为密码粘贴快捷键
+        --     table.insert(passwordPaste, {msg = v.msg})
+        else
+            table.insert(otheres, {msg = v.msg})
         end
     end
+
 
     hotkeys = {}
     for k, v in ipairs(applicationSwitchText) do
@@ -70,7 +76,11 @@ function formatText()
     for k, v in ipairs(windowManagement) do
         table.insert(hotkeys, {msg = v.msg})
     end
-    for k, v in ipairs(passwordPaste) do
+    -- for k, v in ipairs(passwordPaste) do
+    --     table.insert(hotkeys, {msg = v.msg})
+    -- end
+
+    for k, v in ipairs(otheres) do
         table.insert(hotkeys, {msg = v.msg})
     end
 
@@ -92,6 +102,88 @@ function formatText()
         table.insert(renderText, {line = msg})
     end
     return renderText
+end
+
+
+function formatText()
+    
+    -- 加载所有绑定的快捷键
+    local hotkeys = hs.hotkey.getHotkeys()
+    local renderText = {}
+    -- 快捷键分类
+    -- 应用切换类
+    local applicationSwitchText = {}
+    table.insert(applicationSwitchText, {msg = '[快捷键:]'})
+    
+
+    -- 每行最多 40 个字符
+    local MAX_LEN = 40
+
+    -- 快捷键分类
+    for k, v in ipairs(hotkeys) do
+        -- print_r(v)
+        table.insert(applicationSwitchText, {msg = v.msg})
+    end
+
+
+    hotkeys = {}
+    for k, v in ipairs(applicationSwitchText) do
+        table.insert(hotkeys, {msg = v.msg})
+    end
+    
+
+    -- 文本定长
+    for k, v in ipairs(hotkeys) do
+        num = num + 1
+        local msg = v.msg
+        local len = utf8len(msg)
+        -- 超过最大长度，截断多余部分，截断的部分作为新的一行
+        while len > MAX_LEN do
+            local substr = utf8sub(msg, 1, MAX_LEN)
+            table.insert(renderText, {line = substr})
+            msg = utf8sub(msg, MAX_LEN + 1, len)
+            len = utf8len(msg)
+        end
+        for i = 1, MAX_LEN - utf8len(msg), 1 do
+            msg = msg .. ' '
+        end
+        table.insert(renderText, {line = msg})
+    end
+    return renderText
+end
+
+function print_r ( t )  
+    local print_r_cache={}
+    local function sub_print_r(t,indent)
+        if (print_r_cache[tostring(t)]) then
+            print(indent.."*"..tostring(t))
+        else
+            print_r_cache[tostring(t)]=true
+            if (type(t)=="table") then
+                for pos,val in pairs(t) do
+                    if (type(val)=="table") then
+                        print(indent.."["..pos.."] => "..tostring(t).." {")
+                        sub_print_r(val,indent..string.rep(" ",string.len(pos)+8))
+                        print(indent..string.rep(" ",string.len(pos)+6).."}")
+                    elseif (type(val)=="string") then
+                        print(indent.."["..pos..'] => "'..val..'"')
+                    else
+                        print(indent.."["..pos.."] => "..tostring(val))
+                    end
+                end
+            else
+                print(indent..tostring(t))
+            end
+        end
+    end
+    if (type(t)=="table") then
+        print(tostring(t).." {")
+        sub_print_r(t,"  ")
+        print("}")
+    else
+        sub_print_r(t,"  ")
+    end
+    print()
 end
 
 function drawText(renderText)
@@ -189,9 +281,9 @@ end
 drawText(formatText())
 
 -- ⌥/ 显示/隐藏快捷键列表
-hs.hotkey.bind(hotkey.prefix, hotkey.key, toggleHotkeysShow)
+hs.hotkey.bind(hotkey.show.prefix, hotkey.show.key,hotkey.show.message, toggleHotkeysShow)
 -- Esc 关闭快捷键列表（仅在快捷键列表已显示情况下生效）
--- hs.hotkey.bind({'zero'}, 'escape',  closeHotKeyShow)
+hs.hotkey.bind(hotkey.hide.prefix, hotkey.hide.key,hotkey.hide.message, closeHotKeyShow)
 
 -- 禁用快捷键alert消息
 hs.hotkey.alertDuration = 0

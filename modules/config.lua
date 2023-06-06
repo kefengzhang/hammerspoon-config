@@ -16,38 +16,8 @@ defaultConfig = {
         enable = true,
     },
     {
-        module = "modules.emoji",
-        name = "表情包搜索",
-        enable = true,
-    },
-    {
-        module = "modules.password",
-        name = "密码粘贴",
-        enable = true,
-    },
-    {
-        module = "modules.input-method",
-        name = "输入法切换",
-        enable = false,
-    },
-    {
         module = "modules.im-autoSelect",
         name = "自动输入法",
-        enable = false,
-    },
-    {
-        module = "modules.network",
-        name = "实时网速",
-        enable = true,
-    },
-    {
-        module = "modules.keystroke-visualizer",
-        name = "按键回显",
-        enable = false,
-    },
-    {
-        module = "modules.wallpaper",
-        name = "壁纸切换",
         enable = false,
     },
     {
@@ -56,13 +26,18 @@ defaultConfig = {
         enable = true,
     },
     {
-        module = "modules.remind",
-        name = "提醒下班",
+        module = "modules.wifi",
+        name = "wifi监控",
         enable = false,
     },
     {
-        module = "modules.update",
-        name = "自动检查更新",
+        module = "modules.bluetooth",
+        name = "蓝牙",
+        enable = true,
+    },
+    {
+        module = "modules.otheres",
+        name = "其他",
         enable = true,
     },
 }

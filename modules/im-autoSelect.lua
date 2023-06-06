@@ -53,7 +53,7 @@ function updateFocusAppInputMethod()
 end
 
 -- helper hotkey to figure out the app path and name of current focused window
-hs.hotkey.bind({ 'ctrl', 'cmd' }, ".", function()
+hs.hotkey.bind({ 'ctrl', 'cmd' }, ".","显示app信息", function()
     hs.alert.show("App path:        "
         .. hs.window.focusedWindow():application():path()
         .. "\n"
