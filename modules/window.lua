@@ -535,8 +535,75 @@ hs.hotkey.bind(windows.right_1_2.prefix, windows.right_1_2.key, windows.right_1_
 end)
 
 
--- 左 1/3（横屏）或上 1/3（竖屏）
-hs.hotkey.bind(windows.left_1_3.prefix, windows.left_1_3.key, windows.left_1_3.message, function()
+-- -- 左 1/3（横屏）或上 1/3（竖屏）
+-- hs.hotkey.bind(windows.left_1_3.prefix, windows.left_1_3.key, windows.left_1_3.message, function()
+--     local win = hs.window.focusedWindow()
+--     local f = win:frame()
+--     local screen = win:screen()
+--     local max = screen:frame()
+--     -- 如果为竖屏
+--     if isVerticalScreen(screen) then
+--         f.x = max.x
+--         f.y = max.y
+--         f.w = max.w
+--         f.h = max.h / 3
+--         -- 如果为横屏
+--     else
+--         f.x = max.x
+--         f.y = max.y
+--         f.w = max.w / 3
+--         f.h = max.h
+--     end
+--     win:setFrame(f)
+-- end)
+
+-- -- 中 1/3
+-- hs.hotkey.bind(windows.middle.prefix, windows.middle.key, windows.middle.message, function()
+--     local win = hs.window.focusedWindow()
+--     local f = win:frame()
+--     local screen = win:screen()
+--     local max = screen:frame()
+--     -- 如果为竖屏
+--     if isVerticalScreen(screen) then
+--         f.x = max.x
+--         f.y = max.y + (max.h / 3)
+--         f.w = max.w
+--         f.h = max.h / 3
+--         -- 如果为横屏
+--     else
+--         f.x = max.x + (max.w / 3)
+--         f.y = max.y
+--         f.w = max.w / 3
+--         f.h = max.h
+--     end
+--     win:setFrame(f)
+-- end)
+
+-- -- 右 1/3（横屏）或下 1/3（竖屏）
+-- hs.hotkey.bind(windows.right_1_3.prefix, windows.right_1_3.key, windows.right_1_3.message, function()
+--     local win = hs.window.focusedWindow()
+--     local f = win:frame()
+--     local screen = win:screen()
+--     local max = screen:frame()
+--     -- 如果为竖屏
+--     if isVerticalScreen(screen) then
+--         f.x = max.x
+--         f.y = max.y + (max.h / 3 * 2)
+--         f.w = max.w
+--         f.h = max.h / 3
+--         -- 如果为横屏
+--     else
+--         f.x = max.x + (max.w / 3 * 2)
+--         f.y = max.y
+--         f.w = max.w / 3
+--         f.h = max.h
+--     end
+--     win:setFrame(f)
+-- end)
+
+
+-- 左 2/3（横屏）或上 2/3（竖屏）
+hs.hotkey.bind(windows.left_2_3.prefix, windows.left_2_3.key, windows.left_2_3.message, function()
     local win = hs.window.focusedWindow()
     local f = win:frame()
     local screen = win:screen()
@@ -546,19 +613,41 @@ hs.hotkey.bind(windows.left_1_3.prefix, windows.left_1_3.key, windows.left_1_3.m
         f.x = max.x
         f.y = max.y
         f.w = max.w
-        f.h = max.h / 3
+        f.h = (max.h *2) / 3
         -- 如果为横屏
     else
         f.x = max.x
         f.y = max.y
-        f.w = max.w / 3
+        f.w = (max.w *2)/ 3
         f.h = max.h
     end
     win:setFrame(f)
 end)
 
--- 中 1/3
-hs.hotkey.bind(windows.middle.prefix, windows.middle.key, windows.middle.message, function()
+-- 中 2/3
+hs.hotkey.bind(windows.middle2.prefix, windows.middle2.key, windows.middle2.message, function()
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
+    local screen = win:screen()
+    local max = screen:frame()
+    -- 如果为竖屏
+    if isVerticalScreen(screen) then
+        f.x = max.x
+        f.y = max.y + (max.h / 6)
+        f.w = max.w
+        f.h = (max.h *2) / 3
+        -- 如果为横屏
+    else
+        f.x = max.x + (max.w / 6)
+        f.y = max.y
+        f.w = (max.w *2)/ 3
+        f.h = max.h
+    end
+    win:setFrame(f)
+end)
+
+-- 右 2/3（横屏）或下 2/3（竖屏）
+hs.hotkey.bind(windows.right_2_3.prefix, windows.right_2_3.key, windows.right_2_3.message, function()
     local win = hs.window.focusedWindow()
     local f = win:frame()
     local screen = win:screen()
@@ -568,38 +657,17 @@ hs.hotkey.bind(windows.middle.prefix, windows.middle.key, windows.middle.message
         f.x = max.x
         f.y = max.y + (max.h / 3)
         f.w = max.w
-        f.h = max.h / 3
+        f.h = (max.h *2) / 3
         -- 如果为横屏
     else
         f.x = max.x + (max.w / 3)
         f.y = max.y
-        f.w = max.w / 3
+        f.w = (max.w *2)/ 3
         f.h = max.h
     end
     win:setFrame(f)
 end)
 
--- 右 1/3（横屏）或下 1/3（竖屏）
-hs.hotkey.bind(windows.right_1_3.prefix, windows.right_1_3.key, windows.right_1_3.message, function()
-    local win = hs.window.focusedWindow()
-    local f = win:frame()
-    local screen = win:screen()
-    local max = screen:frame()
-    -- 如果为竖屏
-    if isVerticalScreen(screen) then
-        f.x = max.x
-        f.y = max.y + (max.h / 3 * 2)
-        f.w = max.w
-        f.h = max.h / 3
-        -- 如果为横屏
-    else
-        f.x = max.x + (max.w / 3 * 2)
-        f.y = max.y
-        f.w = max.w / 3
-        f.h = max.h
-    end
-    win:setFrame(f)
-end)
 
 -- -- 左 2/3（横屏）或上 2/3（竖屏）
 -- hs.hotkey.bind(windows.left_2_3.prefix, windows.left_2_3.key, windows.left_2_3.message, function()

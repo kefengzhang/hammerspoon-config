@@ -32,6 +32,7 @@ local app2Ime = {
     -- {'/Applications/wechatwebdevtools.app', 'English'},
     -- {'/Applications/Sketch.app', 'English'},
     -- {'/Applications/iShot.app', 'Chinese'},
+    -- {'/Applications/Lark.app', 'Chinese'},
     -- {'/var/folders/04/1gyprfy51tq28pynnndlcn000000gn/T/AppTranslocation/8B88DD98-13BF-460E-8EA2-5A10C8A5CC9C/d/Visual Studio Code.app', 'English'},
 }
 
