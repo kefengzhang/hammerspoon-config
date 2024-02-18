@@ -3,6 +3,16 @@ function bluetoothSwitch(state)
     -- state: 0(off), 1(on)
     cmd = "/usr/local/bin/blueutil --power "..(state)
     result = hs.osascript.applescript(string.format('do shell script "%s"', cmd))
+    print("bluetoothSwitch:"..state)
+    print(result)
+end
+--休眠自动关闭代理
+function closeVPN()
+  -- state: 0(off), 1(on)
+  cmd = "/usr/local/bin/warp-cli disconnect"
+  result = hs.osascript.applescript(string.format('do shell script "%s"', cmd))
+  print("closeVPN:")
+  print(result)
 end
 
 function caffeinateCallback(eventType)
@@ -14,6 +24,7 @@ function caffeinateCallback(eventType)
       print("screensDidLock")
     --   switch_wallpaper()
       bluetoothSwitch(0)
+      closeVPN()
       -- local chrome = hs.application.get("Google Chrome")
       -- print(chrome)
       -- if chrome ~= nil then
