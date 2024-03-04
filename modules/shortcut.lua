@@ -54,40 +54,40 @@ windows = {
     -- nine = {prefix = {"Ctrl", "Option"}, key = "9", message = "9/9"},
 
     -- 左 1/2（横屏）或上 1/2（竖屏）
-    left_1_2 = {prefix = {"Option"}, key = "1", message = "左或上2分之1"},
+    left_1_2 = {prefix = {"Option"}, key = "1", message = "窗口左或上2分之1"},
     -- 2分之1中间
-    middle_1_2 = {prefix = {"Option"}, key = "2", message = "2分之1中间"},
+    middle_1_2 = {prefix = {"Option"}, key = "2", message = "窗口2分之1中间"},
     -- 右 1/2（横屏）或下 1/2（竖屏）
-    right_1_2 = {prefix = {"Option"}, key = "3", message = "右或下2分之1"},
+    right_1_2 = {prefix = {"Option"}, key = "3", message = "窗口右或下2分之1"},
 
     -- 左 2/3（横屏）或上 2/3（竖屏）
-    left_2_3 = {prefix = {"Option"}, key = "4", message = "左或上3分之2"},
+    left_2_3 = {prefix = {"Option"}, key = "4", message = "窗口左或上3分之2"},
     -- 中 2/3
-    middle2 = {prefix = {"Option"}, key = "5", message = "3分之2中间"},
+    middle2 = {prefix = {"Option"}, key = "5", message = "窗口3分之2中间"},
     -- 右 2/3（横屏）或下 2/3（竖屏）
-    right_2_3 = {prefix = {"Option"}, key = "6", message = "右或下3分之2"},
+    right_2_3 = {prefix = {"Option"}, key = "6", message = "窗口右或下3分之2"},
     -- -- 左 2/3（横屏）或上 2/3（竖屏）
     -- left_2_3 = {prefix = {"Ctrl", "Option"}, key = "E", message = "Left 2/3(Horizontal screen) Or Top 2/3(Vertical screen)"},
     -- -- 右 2/3（横屏）或下 2/3（竖屏）
     -- right_2_3 = {prefix = {"Ctrl", "Option"}, key = "T", message = "Right 2/3(Horizontal screen)Or Bottom 2/3(Vertical screen)"},
     -- 居中
-    center = {prefix = {"Option"}, key = "Down", message = "中间"},
+    center = {prefix = {"Option"}, key = "Down", message = "窗口移到中间"},
     -- -- 等比例放大窗口
     -- zoom = {prefix = {"Ctrl", "Option"}, key = "=", message = "Zoom Window"},
     -- -- 等比例缩小窗口
     -- narrow = {prefix = {"Ctrl", "Option"}, key = "-", message = "Narrow Window"},
     -- 最大化
-    max = {prefix = {"Option"}, key = "Up", message = "最大"},
+    max = {prefix = {"Option"}, key = "Up", message = "窗口最大"},
     -- -- 将窗口移动到上方屏幕
     -- to_up = {prefix = {"Ctrl", "Option", "Command"}, key = "Up", message = "Move To Up Screen"},
     -- -- 将窗口移动到下方屏幕
     -- to_down = {prefix = {"Ctrl", "Option", "Command"}, key = "Down", message = "Move To Down Screen"},
     -- 将窗口移动到左侧屏幕
     -- to_left = {prefix = {"Ctrl", "Option", "Command"}, key = "Left", message = "移到左边屏幕"},
-    to_left = {prefix = {"Option"}, key = "Left", message = "移到左边屏幕"},
+    to_left = {prefix = {"Option"}, key = "Left", message = "窗口移到左边屏幕"},
     -- 将窗口移动到右侧屏幕
     -- to_right = {prefix = {"Ctrl", "Option", "Command"}, key = "Right", message = "移到右边屏幕"}
-    to_right = {prefix = {"Option"}, key = "Right", message = "移到右边屏幕"}
+    to_right = {prefix = {"Option"}, key = "Right", message = "窗口移到右边屏幕"}
 }
 
 -- 应用切换快捷键配置

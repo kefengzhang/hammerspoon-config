@@ -114,6 +114,10 @@ function formatText()
     -- 应用切换类
     local applicationSwitchText = {}
     table.insert(applicationSwitchText, {msg = '[快捷键:]'})
+
+    -- 窗口管理类
+    local windowManagement = {}
+    table.insert(windowManagement, {msg = '[窗口排例:]'})
     
 
     -- 每行最多 40 个字符
@@ -122,12 +126,19 @@ function formatText()
     -- 快捷键分类
     for k, v in ipairs(hotkeys) do
         -- print_r(v)
-        table.insert(applicationSwitchText, {msg = v.msg})
+        if string.find(v.msg, '窗口') ~= nil then
+            table.insert(windowManagement, {msg = v.msg})
+        else
+            table.insert(applicationSwitchText, {msg = v.msg})
+        end
     end
 
 
     hotkeys = {}
     for k, v in ipairs(applicationSwitchText) do
+        table.insert(hotkeys, {msg = v.msg})
+    end
+    for k, v in ipairs(windowManagement) do
         table.insert(hotkeys, {msg = v.msg})
     end
     
