@@ -128,7 +128,9 @@ hotkey = {
 
 -- 其他
 otheres = {
-    lock_screen = {prefix = {'ctrl', 'alt', 'cmd'}, key = "L", message="锁屏"}
+    lock_screen = {prefix = {'ctrl', 'alt', 'cmd'}, key = "L", message="锁屏"},
+    open_vpn = {prefix = {'ctrl', 'alt', 'cmd'}, key = "O", message="打开代理"},
+    close_vpn = {prefix = {'ctrl', 'alt', 'cmd'}, key = "C", message="关闭代理"},
 }
 
 -- 表情包搜索快捷键配置
