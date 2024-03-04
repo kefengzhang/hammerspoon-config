@@ -286,4 +286,4 @@ hs.hotkey.bind(hotkey.show.prefix, hotkey.show.key,hotkey.show.message, toggleHo
 hs.hotkey.bind(hotkey.hide.prefix, hotkey.hide.key,hotkey.hide.message, closeHotKeyShow)
 
 -- 禁用快捷键alert消息
-hs.hotkey.alertDuration = 0
+hs.hotkey.alertDuration = 1
