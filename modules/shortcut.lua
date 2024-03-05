@@ -23,9 +23,9 @@ windows = {
     -- -- 右半屏
     -- right = {prefix = {"Ctrl", "Option"}, key = "Right", message = "Right Half"},
     -- 上半屏
-    up = {prefix = {"Ctrl", "Option", "Command"}, key = "Up", message = "上部"},
+    up = {prefix = {"Ctrl", "Option", "Command"}, key = "Up", message = "窗口上部"},
     -- 下半屏
-    down = {prefix = {"Ctrl", "Option", "Command"}, key = "Down", message = "下部"},
+    down = {prefix = {"Ctrl", "Option", "Command"}, key = "Down", message = "窗口下部"},
     -- -- 左上角
     -- top_left = {prefix = {"Ctrl", "Option"}, key = "U", message = "Top Left"},
     -- -- 右上角
