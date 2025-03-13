@@ -294,7 +294,7 @@ drawText(formatText())
 -- ⌥/ 显示/隐藏快捷键列表
 hs.hotkey.bind(hotkey.show.prefix, hotkey.show.key,hotkey.show.message, toggleHotkeysShow)
 -- Esc 关闭快捷键列表（仅在快捷键列表已显示情况下生效）
-hs.hotkey.bind(hotkey.hide.prefix, hotkey.hide.key,hotkey.hide.message, closeHotKeyShow)
+-- hs.hotkey.bind(hotkey.hide.prefix, hotkey.hide.key,hotkey.hide.message, closeHotKeyShow)
 
 -- 禁用快捷键alert消息
 hs.hotkey.alertDuration = 1
