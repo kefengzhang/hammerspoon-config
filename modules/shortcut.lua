@@ -128,7 +128,7 @@ hotkey = {
 
 -- 其他
 otheres = {
-    lock_screen = {prefix = {'ctrl', 'alt', 'cmd'}, key = "L", message="锁屏"},
+    lock_screen = {prefix = {'ctrl', 'alt', 'cmd'}, key = "L", message="屏保"},
     open_vpn = {prefix = {'ctrl', 'alt', 'cmd'}, key = "O", message="打开代理"},
     close_vpn = {prefix = {'ctrl', 'alt', 'cmd'}, key = "C", message="关闭代理"},
 }

@@ -23,8 +23,8 @@ function caffeinateCallback(eventType)
     elseif (eventType == hs.caffeinate.watcher.screensDidLock) then
       print("screensDidLock")
     --   switch_wallpaper()
-      bluetoothSwitch(0)
-      closeVPN()
+      -- bluetoothSwitch(0)
+      -- closeVPN()
       -- local chrome = hs.application.get("Google Chrome")
       -- print(chrome)
       -- if chrome ~= nil then
@@ -32,7 +32,7 @@ function caffeinateCallback(eventType)
       -- end
     elseif (eventType == hs.caffeinate.watcher.screensDidUnlock) then
       print("screensDidUnlock")
-      bluetoothSwitch(1)
+      -- bluetoothSwitch(1)
       -- switch_wallpaper()
     end
 end
