@@ -21,10 +21,16 @@ function toggleAppByBundleId(appBundleID)
     hs.application.launchOrFocusByBundleID(appBundleID)
 
     -- 获取 application 对象
-    local applications = hs.application.applicationsForBundleID(appBundleID)
+    local apps = hs.application.applicationsForBundleID(appBundleID)
     local application = nil
-    for k, v in ipairs(applications) do
+    for k, v in ipairs(apps) do
         application = v
+        break
+    end
+
+    if application == nil then
+        hs.printf("应用启动失败或未找到：%s", appBundleID)
+        return
     end
 
     local currentFocusedWindow = application:focusedWindow()

@@ -1,27 +1,27 @@
---休眠自动关闭蓝牙
+-- 休眠自动关闭蓝牙
 function bluetoothSwitch(state)
     -- state: 0(off), 1(on)
-    cmd = "/usr/local/bin/blueutil --power "..(state)
-    result = hs.osascript.applescript(string.format('do shell script "%s"', cmd))
-    print("bluetoothSwitch:"..state)
-    print(result)
+    local cmd = "/usr/local/bin/blueutil --power " .. tostring(state)
+    local result = hs.osascript.applescript(string.format('do shell script "%s"', cmd))
+    hs.printf("蓝牙切换：%s", tostring(state))
+    hs.printf("蓝牙切换结果：%s", tostring(result))
 end
---休眠自动关闭代理
+
+-- 休眠自动关闭代理
 function closeVPN()
-  -- state: 0(off), 1(on)
-  cmd = "/usr/local/bin/warp-cli disconnect"
-  result = hs.osascript.applescript(string.format('do shell script "%s"', cmd))
-  print("closeVPN:")
-  print(result)
+    local cmd = "/usr/local/bin/warp-cli disconnect"
+    local result = hs.osascript.applescript(string.format('do shell script "%s"', cmd))
+    hs.printf("VPN 断开")
+    hs.printf("VPN 断开结果：%s", tostring(result))
 end
 
 function caffeinateCallback(eventType)
     if (eventType == hs.caffeinate.watcher.screensDidSleep) then
-      print("screensDidSleep")
+      hs.printf("屏幕已休眠")
     elseif (eventType == hs.caffeinate.watcher.screensDidWake) then
-      print("screensDidWake")
+      hs.printf("屏幕已唤醒")
     elseif (eventType == hs.caffeinate.watcher.screensDidLock) then
-      print("screensDidLock")
+      hs.printf("屏幕已锁定")
     --   switch_wallpaper()
       -- bluetoothSwitch(0)
       -- closeVPN()
@@ -31,7 +31,7 @@ function caffeinateCallback(eventType)
       --     chrome:kill()
       -- end
     elseif (eventType == hs.caffeinate.watcher.screensDidUnlock) then
-      print("screensDidUnlock")
+      hs.printf("屏幕已解锁")
       -- bluetoothSwitch(1)
       -- switch_wallpaper()
     end

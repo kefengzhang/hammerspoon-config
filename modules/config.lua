@@ -55,6 +55,11 @@ function loadConfig()
         -- 创建文件
         file = io.open(config_path, "w+")
     end
+    -- 文件打开失败（例如权限不足）
+    if file == nil then
+        hs.printf("配置加载失败：无法打开配置文件 %s，使用默认配置", config_path)
+        return serialize(defaultConfig)
+    end
     -- 读取文件所有内容
     local config = file:read("*a")
     -- 配置文件中不存在配置
@@ -68,7 +73,12 @@ end
 
 function saveConfig(config)
     -- 清空文件内容，然后写入新的文件内容
-    file = io.open(config_path, "w+")
+    local file = io.open(config_path, "w+")
+    if file == nil then
+        hs.printf("配置保存失败：无法打开配置文件 %s", config_path)
+        return false
+    end
     file:write(serialize(config))
     file:close()
+    return true
 end

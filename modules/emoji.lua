@@ -66,7 +66,6 @@ function request(query)
     hs.http.doAsyncRequest(url, "GET", nil, request_headers, function(code, body, response_headers)
         rawjson = hs.json.decode(body)
         if code == 200 and rawjson.code == 1000 then
-            len = #rawjson.data
             for k, v in ipairs(rawjson.data) do
                 local file_path = cache_dir .. hs.http.urlParts(v.url).lastPathComponent
                 -- 下载图片
@@ -111,15 +110,7 @@ function async_download_callback(exitCode, stdOut, stdErr)
     chooser:choices(choices)
 end
 
-function file_exists(file_path)
-    local f = io.open(file_path, "r")
-    if f ~= nil then
-        io.close(f)
-        return true
-    else
-        return false
-    end
-end
+-- file_exists 已由 modules.base 提供
 
 function preview(path)
     if path == nil then
@@ -162,9 +153,13 @@ select_key = hs.eventtap
             return
         end
         -- TODO-JING 第一项需要直接预览
-        number = chooser:selectedRow()
+        local choices_len = #choices
+        if choices_len == 0 then
+            return
+        end
+        local number = chooser:selectedRow()
         if "down" == key then
-            if number < len then
+            if number < choices_len then
                 number = number + 1
             else
                 number = 1
@@ -174,11 +169,13 @@ select_key = hs.eventtap
             if number > 1 then
                 number = number - 1
             else
-                number = len
+                number = choices_len
             end
         end
-        row_contents = chooser:selectedRowContents(number)
-        preview(row_contents.path)
+        local row_contents = chooser:selectedRowContents(number)
+        if row_contents and row_contents.path then
+            preview(row_contents.path)
+        end
     end)
     :start()
 

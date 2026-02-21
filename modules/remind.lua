@@ -1,7 +1,13 @@
 -- 提醒休息等功能
 
--- 下班
-local screen = hs.window.focusedWindow():screen():frame()
+-- 下班：使用主屏幕获取坐标，避免无焦点窗口时崩溃
+local focusedWindow = hs.window.focusedWindow()
+local screen
+if focusedWindow ~= nil then
+    screen = focusedWindow:screen():frame()
+else
+    screen = hs.screen.mainScreen():frame()
+end
 
 local COORIDNATE_X = screen.w / 2
 local COORIDNATE_Y = screen.h / 2

@@ -15,8 +15,8 @@ local function download_file(url, save_path)
 end
 
 local function async_download_callback(exitCode, stdOut, stdErr)
-    -- 何もしない
-    print("exitCode:", exitCode, "stdOut:", stdOut, "stdErr:", stdErr)
+    -- 壁纸下载完成回调（调试用可取消注释）
+    -- hs.printf("壁纸下载：exitCode=%s", tostring(exitCode))
 end
 
 function get_save_path(dir, downloadable_path)
@@ -101,7 +101,7 @@ end
 
 function delete_wallpaper()
     local today_dir = get_today_dir()
-    print("today_dir:", today_dir)
+    hs.printf("壁纸清理目录：%s", tostring(today_dir))
     for file in hs.fs.dir(CACHE_DIR) do
         if file ~= "." and file ~= ".." and file ~= format_today() then
             hs.fs.rmdir(CACHE_DIR .. file)

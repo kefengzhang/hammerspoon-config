@@ -128,6 +128,25 @@ function trim(s)
     return (s:gsub("^%s+", ""):gsub("%s+$", ""))
 end
 
+-- 检查文件或目录是否存在
+function file_exists(path)
+    if path == nil or path == "" then
+        return false
+    end
+    local f = io.open(path, "r")
+    if f ~= nil then
+        io.close(f)
+        return true
+    end
+    -- 目录检查：尝试列出目录
+    local ok, err = pcall(function()
+        for _ in hs.fs.dir(path) do
+            break
+        end
+    end)
+    return ok
+end
+
 function pushleft(list, value)
     local first = list.first - 1
     list.first = first
@@ -176,7 +195,7 @@ function day_step(old_day, step)
         d = string.sub(old_day, 10, 10)
     end
 
-    y = string.sub(old_day, 0, 4)
+    y = string.sub(old_day, 1, 4)
 
     local old_time = os.time({ year = y, month = m, day = d })
     local new_time = old_time + 86400 * step

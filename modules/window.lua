@@ -257,9 +257,20 @@ local AUTO_LAYOUT_TYPE = {
 --     win:setFrame(f)
 -- end)
 
+-- 获取焦点窗口，无焦点时返回 nil 并提示
+local function getFocusedWindowOrReturn()
+    local win = hs.window.focusedWindow()
+    if win == nil then
+        hs.printf("当前无焦点窗口")
+        return nil
+    end
+    return win
+end
+
 -- 上半屏
 hs.hotkey.bind(windows.up.prefix, windows.up.key, windows.up.message, function()
-    local win = hs.window.focusedWindow()
+    local win = getFocusedWindowOrReturn()
+    if win == nil then return end
     local f = win:frame()
     local screen = win:screen()
     local max = screen:frame()
@@ -273,7 +284,8 @@ end)
 
 -- 下半屏
 hs.hotkey.bind(windows.down.prefix, windows.down.key, windows.down.message, function()
-    local win = hs.window.focusedWindow()
+    local win = getFocusedWindowOrReturn()
+    if win == nil then return end
     local f = win:frame()
     local screen = win:screen()
     local max = screen:frame()
@@ -469,7 +481,8 @@ end)
 
 -- 左 1/2（横屏）或上 1/2（竖屏）
 hs.hotkey.bind(windows.left_1_2.prefix, windows.left_1_2.key, windows.left_1_2.message, function()
-    local win = hs.window.focusedWindow()
+    local win = getFocusedWindowOrReturn()
+    if win == nil then return end
     local f = win:frame()
     local screen = win:screen()
     local max = screen:frame()
@@ -492,7 +505,8 @@ end)
 
 -- 中 1/2
 hs.hotkey.bind(windows.middle_1_2.prefix, windows.middle_1_2.key, windows.middle_1_2.message, function()
-    local win = hs.window.focusedWindow()
+    local win = getFocusedWindowOrReturn()
+    if win == nil then return end
     local f = win:frame()
     local screen = win:screen()
     local max = screen:frame()
@@ -514,7 +528,8 @@ end)
 
 -- 右 1/2（横屏）或下 1/2（竖屏）
 hs.hotkey.bind(windows.right_1_2.prefix, windows.right_1_2.key, windows.right_1_2.message, function()
-    local win = hs.window.focusedWindow()
+    local win = getFocusedWindowOrReturn()
+    if win == nil then return end
     local f = win:frame()
     local screen = win:screen()
     local max = screen:frame()
@@ -604,7 +619,8 @@ end)
 
 -- 左 2/3（横屏）或上 2/3（竖屏）
 hs.hotkey.bind(windows.left_2_3.prefix, windows.left_2_3.key, windows.left_2_3.message, function()
-    local win = hs.window.focusedWindow()
+    local win = getFocusedWindowOrReturn()
+    if win == nil then return end
     local f = win:frame()
     local screen = win:screen()
     local max = screen:frame()
@@ -626,7 +642,8 @@ end)
 
 -- 中 2/3
 hs.hotkey.bind(windows.middle2.prefix, windows.middle2.key, windows.middle2.message, function()
-    local win = hs.window.focusedWindow()
+    local win = getFocusedWindowOrReturn()
+    if win == nil then return end
     local f = win:frame()
     local screen = win:screen()
     local max = screen:frame()
@@ -648,7 +665,8 @@ end)
 
 -- 右 2/3（横屏）或下 2/3（竖屏）
 hs.hotkey.bind(windows.right_2_3.prefix, windows.right_2_3.key, windows.right_2_3.message, function()
-    local win = hs.window.focusedWindow()
+    local win = getFocusedWindowOrReturn()
+    if win == nil then return end
     local f = win:frame()
     local screen = win:screen()
     local max = screen:frame()
@@ -724,7 +742,8 @@ end
 
 -- 居中
 hs.hotkey.bind(windows.center.prefix, windows.center.key, windows.center.message, function()
-    local win = hs.window.focusedWindow()
+    local win = getFocusedWindowOrReturn()
+    if win == nil then return end
     local f = win:frame()
     local screen = win:screen()
     local max = screen:frame()
@@ -785,9 +804,8 @@ end)
 
 -- 最大化
 hs.hotkey.bind(windows.max.prefix, windows.max.key, windows.max.message, function()
-    -- local win = hs.window.focusedWindow()
-    -- win:maximize()
-    local win = hs.window.focusedWindow()
+    local win = getFocusedWindowOrReturn()
+    if win == nil then return end
     local f = win:frame()
     local screen = win:screen()
     local max = screen:frame()
@@ -818,17 +836,16 @@ end)
 
 -- 将窗口移动到左侧屏幕
 hs.hotkey.bind(windows.to_left.prefix, windows.to_left.key, windows.to_left.message, function()
-    local win = hs.window.focusedWindow()
-    if win then
+    local win = getFocusedWindowOrReturn()
+    if win ~= nil then
         win:moveOneScreenWest()
     end
 end)
 
 -- 将窗口移动到右侧屏幕
 hs.hotkey.bind(windows.to_right.prefix, windows.to_right.key, windows.to_right.message, function()
-    local win = hs.window.focusedWindow()
-
-    if win then
+    local win = getFocusedWindowOrReturn()
+    if win ~= nil then
         local f = win:frame()
         local screen = win:screen()
         local max = screen:frame()
