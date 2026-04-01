@@ -267,6 +267,31 @@ local function getFocusedWindowOrReturn()
     return win
 end
 
+-- 将窗口在所在屏幕上铺满（与「最大化」快捷键效果一致）
+local function maximizeOnCurrentScreen(win)
+    local screen = win:screen()
+    local max = screen:frame()
+    local f = win:frame()
+    f.x = max.x
+    f.y = max.y
+    f.w = max.w
+    f.h = max.h
+    win:setFrame(f)
+end
+
+-- 向左或向右邻屏移动并铺满：toWest/toEast 解析邻屏；用目标屏的 frame 直接 setFrame（勿用 "[0,0,1,1]" 字符串，易被解析成宽 1 高 1 的 rect）
+-- westOrEast: "west" 左侧屏，"east" 右侧屏
+local function moveToAdjacentScreenFullscreen(win, westOrEast)
+    local screen = win:screen()
+    local from = win:frame()
+    local target = westOrEast == "west" and screen:toWest(from) or screen:toEast(from)
+    if target == nil then
+        return
+    end
+    local max = target:frame()
+    win:setFrame(max, 0)
+end
+
 -- 上半屏
 hs.hotkey.bind(windows.up.prefix, windows.up.key, windows.up.message, function()
     local win = getFocusedWindowOrReturn()
@@ -834,26 +859,18 @@ end)
 --     end
 -- end)
 
--- 将窗口移动到左侧屏幕
+-- 将窗口移动到左侧屏幕并在该屏全屏（同步一次 setFrame，无等待）
 hs.hotkey.bind(windows.to_left.prefix, windows.to_left.key, windows.to_left.message, function()
     local win = getFocusedWindowOrReturn()
     if win ~= nil then
-        win:moveOneScreenWest()
+        moveToAdjacentScreenFullscreen(win, "west")
     end
 end)
 
--- 将窗口移动到右侧屏幕
+-- 将窗口移动到右侧屏幕并在该屏全屏（同步一次 setFrame，无等待）
 hs.hotkey.bind(windows.to_right.prefix, windows.to_right.key, windows.to_right.message, function()
     local win = getFocusedWindowOrReturn()
     if win ~= nil then
-        local f = win:frame()
-        local screen = win:screen()
-        local max = screen:frame()
-
-        f.x = max.x
-        f.y = max.y
-        f.w = max.w
-        f.h = max.h
-        win:moveOneScreenEast(f)
+        moveToAdjacentScreenFullscreen(win, "east")
     end
 end)
