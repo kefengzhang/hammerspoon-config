@@ -1,9 +1,11 @@
+require("modules.base")
+
 -- 默认加载的功能模块
 defaultConfig = {
     {
         -- 配置版本号
         -- 每次新增功能项，需将版本号加 1
-        configVersion = "8",
+        configVersion = "9",
     },
     {
         module = "modules.window",
@@ -40,11 +42,57 @@ defaultConfig = {
         name = "其他",
         enable = true,
     },
+    {
+        module = "modules.mouse_side_buttons",
+        name = "JOMAA鼠标映射",
+        enable = true,
+    },
 }
 
 base_path = os.getenv("HOME") .. "/.hammerspoon/"
 -- 本地配置文件路径
 config_path = base_path .. ".config"
+
+-- 将 defaultConfig 里尚未出现在本地配置中的模块项追加进去，并同步 configVersion（升级仓库后无需点「恢复默认」也能出现新菜单）
+local function mergeMissingModulesFromDefault(configStr)
+    local ok, cfg = pcall(unserialize, configStr)
+    if not ok or type(cfg) ~= "table" then
+        return serialize(defaultConfig), true
+    end
+    local seen = {}
+    for _, item in ipairs(cfg) do
+        if type(item) == "table" and item.module then
+            seen[item.module] = true
+        end
+    end
+    local maxKey = 0
+    for k, _ in pairs(cfg) do
+        if type(k) == "number" and k > maxKey then
+            maxKey = k
+        end
+    end
+    local changed = false
+    for i = 2, #defaultConfig do
+        local def = defaultConfig[i]
+        if type(def) == "table" and def.module and not seen[def.module] then
+            maxKey = maxKey + 1
+            cfg[maxKey] = {
+                module = def.module,
+                name = def.name,
+                enable = def.enable,
+            }
+            seen[def.module] = true
+            changed = true
+        end
+    end
+    if cfg[1] and type(cfg[1]) == "table" and defaultConfig[1] and defaultConfig[1].configVersion then
+        if cfg[1].configVersion ~= defaultConfig[1].configVersion then
+            cfg[1].configVersion = defaultConfig[1].configVersion
+            changed = true
+        end
+    end
+    return serialize(cfg), changed
+end
 
 -- 加载本地配置文件
 function loadConfig()
@@ -62,13 +110,20 @@ function loadConfig()
     end
     -- 读取文件所有内容
     local config = file:read("*a")
+    file:close()
     -- 配置文件中不存在配置
     if config == "" then
-        -- 读取默认配置
-        config = serialize(defaultConfig)
+        return serialize(defaultConfig)
     end
-    file:close()
-    return config
+    local merged, didMerge = mergeMissingModulesFromDefault(config)
+    if didMerge then
+        local wf = io.open(config_path, "w+")
+        if wf then
+            wf:write(merged)
+            wf:close()
+        end
+    end
+    return merged
 end
 
 function saveConfig(config)

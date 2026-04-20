@@ -1,5 +1,5 @@
 -- 鼠标侧键：默认「浏览器」⌘[ / ⌘]；按 bundle id 指定快捷键见 **BUNDLE_NAV_INLINE**（优先）与 BUNDLE_NAV_PROFILE / NAV_PROFILES
--- 由 init.lua 无条件加载
+-- 由菜单项「JOMAA鼠标映射」勾选后加载（与其它功能模块相同）
 
 local log = hs.logger.new("mouseSideBtn", "info")
 
@@ -441,7 +441,16 @@ setupKeycodeRemap()
 setupBroadDebugTap()
 setupMouseButtonPolling()
 
--- 自动诊断改由 init.lua 在全部 require 完成后再延迟调度，避免 init 未跑完时定时器丢失或看不到提示
+-- 自动诊断：在菜单已加载其它模块之后再延迟执行（本模块在 defaultConfig 中通常排在最后）
+if DEBUG_MOUSE_SIDE and AUTO_DIAG_ON_LOAD then
+    hs.timer.doAfter(5, function()
+        hs.printf("[mouse_side_buttons] auto diagnostic timer fired")
+        local ok, err = pcall(runSideButtonDiagnostics, 12)
+        if not ok then
+            hs.alert.show("侧键自动诊断执行失败: " .. tostring(err), 8)
+        end
+    end)
+end
 
 log.i("mouse_side_buttons module initialized")
 -- 调试模式下写入 ping，避免无调试时频繁写盘
@@ -456,5 +465,5 @@ if DEBUG_MOUSE_SIDE then
     )
 end
 
--- 供 init.lua 判断是否在加载结束后自动跑一次诊断
+-- 供控制台或外部脚本判断（自动诊断已在上方直接调度）
 _G.MOUSE_SIDE_BUTTON_AUTO_DIAG_ON_LOAD = DEBUG_MOUSE_SIDE and AUTO_DIAG_ON_LOAD
