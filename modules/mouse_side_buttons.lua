@@ -5,6 +5,10 @@ local log = hs.logger.new("mouseSideBtn", "info")
 
 -- true：启动提示、轮询、宽监听、自动诊断（平时请保持 false）
 local DEBUG_MOUSE_SIDE = false
+-- true：侧键命中时始终在 Console 输出英文日志（用于排查“失效”场景）
+local ALWAYS_LOG_SIDE_KEYS = true
+-- 侧键日志节流（秒）；避免长按/抖动导致刷屏
+local SIDE_LOG_THROTTLE_SEC = 0.12
 -- 首次重载后自动跑一次短时诊断；确认完成后改为 false
 local AUTO_DIAG_ON_LOAD = false
 -- JOMAA 实测：侧键被模拟为方向键 keyDown（见 .mouse_side_diag_last.txt）；若后退/前进反了，对调下面两个 keycode
@@ -98,6 +102,36 @@ local function postSideNav(direction)
     end)
 end
 
+-- 侧键命中日志：始终输出英文（可节流），便于排查“监听未命中/命中但未生效”
+local lastSideLogAt = 0
+local function logSideKeyHit(source, phase, detail, direction)
+    if not ALWAYS_LOG_SIDE_KEYS then
+        return
+    end
+    local now = os.clock()
+    if now - lastSideLogAt < SIDE_LOG_THROTTLE_SEC then
+        return
+    end
+    lastSideLogAt = now
+
+    local app = hs.application.frontmostApplication()
+    local bid = app and app:bundleID() or "nil"
+    local profile = navProfileForApp(app)
+    local stroke = direction == "back" and profile.back or profile.forward
+    log.i(
+        string.format(
+            "sideKey hit source=%s phase=%s %s direction=%s frontmostBundleID=%s send=%s+%s",
+            tostring(source),
+            tostring(phase),
+            tostring(detail),
+            tostring(direction),
+            tostring(bid),
+            table.concat(stroke.mods, "+"),
+            tostring(stroke.key)
+        )
+    )
+end
+
 local prop = hs.eventtap.event.properties.mouseEventButtonNumber
 local types = hs.eventtap.event.types
 
@@ -138,14 +172,21 @@ local function setupRemapTap()
                 hs.alert.show("otherMouse 按下 · 编号=" .. tostring(btn), 1.2)
             end
             if btn == BTN_BACK then
+                logSideKeyHit("otherMouse", "down", "button=" .. tostring(btn), "back")
                 postSideNav("back")
                 return true
             elseif btn == BTN_FORWARD then
+                logSideKeyHit("otherMouse", "down", "button=" .. tostring(btn), "forward")
                 postSideNav("forward")
                 return true
             end
         else
             log.i("otherMouseUp button=" .. tostring(btn))
+            if btn == BTN_BACK then
+                logSideKeyHit("otherMouse", "up", "button=" .. tostring(btn), "back")
+            elseif btn == BTN_FORWARD then
+                logSideKeyHit("otherMouse", "up", "button=" .. tostring(btn), "forward")
+            end
         end
         return false
     end)
@@ -174,7 +215,10 @@ local function setupKeycodeRemap()
                 if DEBUG_MOUSE_SIDE then
                     log.i("keycode remap back kc=" .. tostring(kc))
                 end
+                logSideKeyHit("keycode", "down", "keyCode=" .. tostring(kc), "back")
                 postSideNav("back")
+            else
+                logSideKeyHit("keycode", "up", "keyCode=" .. tostring(kc), "back")
             end
             return true
         end
@@ -183,7 +227,10 @@ local function setupKeycodeRemap()
                 if DEBUG_MOUSE_SIDE then
                     log.i("keycode remap forward kc=" .. tostring(kc))
                 end
+                logSideKeyHit("keycode", "down", "keyCode=" .. tostring(kc), "forward")
                 postSideNav("forward")
+            else
+                logSideKeyHit("keycode", "up", "keyCode=" .. tostring(kc), "forward")
             end
             return true
         end
