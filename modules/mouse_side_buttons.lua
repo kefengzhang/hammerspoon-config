@@ -7,8 +7,12 @@ local log = hs.logger.new("mouseSideBtn", "info")
 local DEBUG_MOUSE_SIDE = false
 -- true：侧键命中时始终在 Console 输出英文日志（用于排查“失效”场景）
 local ALWAYS_LOG_SIDE_KEYS = true
--- 侧键日志节流（秒）；避免长按/抖动导致刷屏
-local SIDE_LOG_THROTTLE_SEC = 0.12
+-- 侧键日志节流（秒）；0 表示不节流（每次按下都输出一条）
+local SIDE_LOG_THROTTLE_SEC = 0
+-- 休眠/唤醒后 eventtap 可能不再收到回调（Console 无 sideKey 日志）；唤醒后延迟重建监听（秒）
+local SIDE_TAP_RESTART_AFTER_WAKE_SEC = 1.5
+-- 周期性检查 tap 是否仍启用；0 表示关闭。仅 isEnabled==false 时会重建并打英文日志
+local SIDE_TAP_HEALTH_CHECK_SEC = 120
 -- 首次重载后自动跑一次短时诊断；确认完成后改为 false
 local AUTO_DIAG_ON_LOAD = false
 -- JOMAA 实测：侧键被模拟为方向键 keyDown（见 .mouse_side_diag_last.txt）；若后退/前进反了，对调下面两个 keycode
@@ -104,15 +108,21 @@ end
 
 -- 侧键命中日志：始终输出英文（可节流），便于排查“监听未命中/命中但未生效”
 local lastSideLogAt = 0
+local sideKeySeq = 0
 local function logSideKeyHit(source, phase, detail, direction)
     if not ALWAYS_LOG_SIDE_KEYS then
         return
     end
+    -- 默认只记录按下，避免 keyUp/抖动导致一按输出多条
+    if phase ~= "down" then
+        return
+    end
     local now = os.clock()
-    if now - lastSideLogAt < SIDE_LOG_THROTTLE_SEC then
+    if SIDE_LOG_THROTTLE_SEC > 0 and now - lastSideLogAt < SIDE_LOG_THROTTLE_SEC then
         return
     end
     lastSideLogAt = now
+    sideKeySeq = sideKeySeq + 1
 
     local app = hs.application.frontmostApplication()
     local bid = app and app:bundleID() or "nil"
@@ -120,7 +130,8 @@ local function logSideKeyHit(source, phase, detail, direction)
     local stroke = direction == "back" and profile.back or profile.forward
     log.i(
         string.format(
-            "sideKey hit source=%s phase=%s %s direction=%s frontmostBundleID=%s send=%s+%s",
+            "sideKey hit seq=%d source=%s phase=%s %s direction=%s frontmostBundleID=%s send=%s+%s",
+            sideKeySeq,
             tostring(source),
             tostring(phase),
             tostring(detail),
@@ -155,13 +166,34 @@ local function eventTypeName(tn)
     return "type_" .. tostring(tn)
 end
 
--- 主映射：otherMouseDown → ⌘[ / ⌘]（仅当未使用键码映射时注册；本鼠标实测走键码 123/124）
+-- otherMouse 与 keycode 两套 eventtap 的句柄（唤醒后需 stop 再重建）
 local mouseSideRemapTap = nil
+local keycodeRemapTap = nil
+
+-- 停止 otherMouse 侧键映射 tap，避免重复注册或唤醒后旧句柄残留
+local function stopMouseSideRemapTap()
+    if mouseSideRemapTap then
+        mouseSideRemapTap:stop()
+        mouseSideRemapTap = nil
+    end
+end
+
+-- 停止键码侧键映射 tap（123/124 方向键路径）
+local function stopKeycodeRemapTap()
+    if keycodeRemapTap then
+        keycodeRemapTap:stop()
+        keycodeRemapTap = nil
+    end
+end
+
+-- 主映射：otherMouseDown → ⌘[ / ⌘]（仅当未使用键码映射时注册；本鼠标实测走键码 123/124）
 local function setupRemapTap()
     if KEYCODE_SIDE_BACK or KEYCODE_SIDE_FORWARD then
+        stopMouseSideRemapTap()
         log.i("otherMouse remap skipped (using KEYCODE_SIDE_* remap)")
         return
     end
+    stopMouseSideRemapTap()
     mouseSideRemapTap = hs.eventtap.new({ types.otherMouseDown, types.otherMouseUp }, function(e)
         local t = e:getType()
         local isDown = (t == types.otherMouseDown)
@@ -182,11 +214,6 @@ local function setupRemapTap()
             end
         else
             log.i("otherMouseUp button=" .. tostring(btn))
-            if btn == BTN_BACK then
-                logSideKeyHit("otherMouse", "up", "button=" .. tostring(btn), "back")
-            elseif btn == BTN_FORWARD then
-                logSideKeyHit("otherMouse", "up", "button=" .. tostring(btn), "forward")
-            end
         end
         return false
     end)
@@ -200,13 +227,13 @@ local function setupRemapTap()
 end
 
 -- 侧键表现为 keyDown/keyUp（固件模拟方向键）时：吞掉原键事件再按当前 App 配置发送快捷键；须同时拦截 keyUp
-local keycodeRemapTap = nil
-
 local function setupKeycodeRemap()
     if not KEYCODE_SIDE_BACK and not KEYCODE_SIDE_FORWARD then
+        stopKeycodeRemapTap()
         log.i("Keycode remap skipped (KEYCODE_SIDE_* not set)")
         return
     end
+    stopKeycodeRemapTap()
     keycodeRemapTap = hs.eventtap.new({ types.keyDown, types.keyUp }, function(e)
         local kc = e:getKeyCode()
         local isDown = (e:getType() == types.keyDown)
@@ -217,8 +244,6 @@ local function setupKeycodeRemap()
                 end
                 logSideKeyHit("keycode", "down", "keyCode=" .. tostring(kc), "back")
                 postSideNav("back")
-            else
-                logSideKeyHit("keycode", "up", "keyCode=" .. tostring(kc), "back")
             end
             return true
         end
@@ -229,8 +254,6 @@ local function setupKeycodeRemap()
                 end
                 logSideKeyHit("keycode", "down", "keyCode=" .. tostring(kc), "forward")
                 postSideNav("forward")
-            else
-                logSideKeyHit("keycode", "up", "keyCode=" .. tostring(kc), "forward")
             end
             return true
         end
@@ -243,6 +266,89 @@ local function setupKeycodeRemap()
     else
         log.i("Keycode remap tap started (back=" .. tostring(KEYCODE_SIDE_BACK) .. " forward=" .. tostring(KEYCODE_SIDE_FORWARD) .. ")")
     end
+end
+
+-- 停止并重新注册侧键 eventtap；macOS 休眠唤醒后 tap 可能不再收到回调（Console 无 sideKey 日志），重建后通常恢复
+local function restartSideButtonEventTaps(reason)
+    reason = tostring(reason or "manual")
+    log.i("sideButton eventtaps restarting, reason=" .. reason)
+    local ok, err = pcall(function()
+        stopMouseSideRemapTap()
+        stopKeycodeRemapTap()
+        setupRemapTap()
+        setupKeycodeRemap()
+    end)
+    if not ok then
+        log.e("sideButton eventtaps restart failed err=" .. tostring(err))
+        return
+    end
+    local omEn = mouseSideRemapTap and mouseSideRemapTap:isEnabled()
+    local kcEn = keycodeRemapTap and keycodeRemapTap:isEnabled()
+    log.i(
+        string.format(
+            "sideButton eventtaps restarted reason=%s otherMouseTapExists=%s otherMouseEnabled=%s keycodeTapExists=%s keycodeEnabled=%s",
+            reason,
+            tostring(mouseSideRemapTap ~= nil),
+            tostring(omEn),
+            tostring(keycodeRemapTap ~= nil),
+            tostring(kcEn)
+        )
+    )
+end
+
+-- 唤醒后短时间内可能多次触发 caffeinate；合并为一次延迟重建
+local wakeRestartDebounceTimer = nil
+local function scheduleRestartSideButtonTapsAfterWake(reason)
+    if wakeRestartDebounceTimer then
+        wakeRestartDebounceTimer:stop()
+        wakeRestartDebounceTimer = nil
+    end
+    wakeRestartDebounceTimer = hs.timer.doAfter(SIDE_TAP_RESTART_AFTER_WAKE_SEC, function()
+        wakeRestartDebounceTimer = nil
+        restartSideButtonEventTaps(reason)
+    end)
+end
+
+-- 监听系统/屏幕唤醒与解锁，延迟重建侧键 eventtap
+local sideButtonCaffeinateWatcher = nil
+local function setupSideButtonWakeWatcher()
+    if sideButtonCaffeinateWatcher then
+        return
+    end
+    local w = hs.caffeinate.watcher
+    sideButtonCaffeinateWatcher = hs.caffeinate.watcher.new(function(eventType)
+        if eventType == w.systemDidWake or eventType == w.screensDidWake or eventType == w.screensDidUnlock then
+            log.i("sideButton caffeinate event=" .. tostring(eventType) .. " scheduling tap restart")
+            scheduleRestartSideButtonTapsAfterWake("caffeinate_" .. tostring(eventType))
+        end
+    end)
+    sideButtonCaffeinateWatcher:start()
+    log.i("sideButton caffeinate watcher started")
+end
+
+-- 周期性检查 tap 是否被系统禁用（仅 isEnabled==false 时重建）
+local sideButtonHealthTimer = nil
+local function setupSideButtonHealthTimer()
+    if SIDE_TAP_HEALTH_CHECK_SEC <= 0 then
+        return
+    end
+    if sideButtonHealthTimer then
+        sideButtonHealthTimer:stop()
+        sideButtonHealthTimer = nil
+    end
+    sideButtonHealthTimer = hs.timer.doEvery(SIDE_TAP_HEALTH_CHECK_SEC, function()
+        local bad = false
+        if mouseSideRemapTap and not mouseSideRemapTap:isEnabled() then
+            bad = true
+        end
+        if keycodeRemapTap and not keycodeRemapTap:isEnabled() then
+            bad = true
+        end
+        if bad then
+            log.w("sideButton health check: tap not enabled, restarting")
+            restartSideButtonEventTaps("health_check_tap_disabled")
+        end
+    end)
 end
 
 -- 宽监听：侧键有时表现为滚轮或系统定义事件
@@ -477,6 +583,8 @@ end
 
 -- 在 Hammerspoon 控制台可再次执行：hsSideButtonDiagnostics(15)
 _G.hsSideButtonDiagnostics = runSideButtonDiagnostics
+-- 手动重建侧键 eventtap（等同一次“仅侧键”软重载）
+_G.hsRestartSideButtonTaps = restartSideButtonEventTaps
 
 -- 入口
 if DEBUG_MOUSE_SIDE then
@@ -485,6 +593,8 @@ end
 
 setupRemapTap()
 setupKeycodeRemap()
+setupSideButtonWakeWatcher()
+setupSideButtonHealthTimer()
 setupBroadDebugTap()
 setupMouseButtonPolling()
 
